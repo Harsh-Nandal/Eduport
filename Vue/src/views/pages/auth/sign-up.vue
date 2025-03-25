@@ -242,7 +242,6 @@ export default defineComponent({
       }),
     });
 
-    console.log("📢 Full API Response:", res);
 
     // ✅ Ensure response is JSON
     const contentType = res.headers.get("Content-Type");
@@ -251,17 +250,14 @@ export default defineComponent({
     }
 
     const data = await res.json();
-    console.log("📢 Parsed JSON Response:", data);
 
     if (data.token) {
-      console.log("✅ Storing Token:", data.token);
 
       // ✅ Store token properly
       localStorage.setItem("authToken", data.token);
       sessionStorage.setItem("authToken", data.token); // Optional fallback
 
       localStorage.setItem("userId", data.userId);
-      console.log("🔍 Retrieved from Storage:", localStorage.getItem("authToken"));
 
       router.push({ name: "auth.sign-up-step2", query: { userId: data.userId } });
     } else {

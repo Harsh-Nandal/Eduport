@@ -9,6 +9,7 @@ const instructorSchema = new mongoose.Schema({
   education: { type: [String], default: [] },
   experience: { type: [String], default: [] },
   profilePicture: { type: String, default: "/uploads/default-avatar.jpg" },
+  courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }] // Array of courses
 });
 
 module.exports = mongoose.model("Instructor", instructorSchema);

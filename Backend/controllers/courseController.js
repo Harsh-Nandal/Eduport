@@ -1,37 +1,38 @@
 const Course = require("../models/course");
+const Instructor = require("../models/instructor");
 
-// Create a new course
 exports.createCourse = async (req, res) => {
-  try {
-    const instructorId = req.user.id; // From auth middleware
-    const { title, description, category, price, curriculum, faqs, tags, messageToReviewer } = req.body;
+    try {
+        const { title, description, category, level, language, price, discount, totalLectures, courseTime, instructorId } = req.body;
 
-    const newCourse = new Course({
-      instructor: instructorId,
-      title,
-      description,
-      category,
-      price,
-      thumbnail: req.file ? req.file.path : "",
-      curriculum: JSON.parse(curriculum),
-      faqs: JSON.parse(faqs),
-      tags: JSON.parse(tags),
-      messageToReviewer,
-    });
+        const course = new Course({
+            title,
+            description,
+            category,
+            level,
+            language,
+            price,
+            discount,
+            totalLectures,
+            courseTime,
+            instructor: instructorId
+        });
 
-    await newCourse.save();
-    res.status(201).json({ message: "Course created successfully", course: newCourse });
-  } catch (error) {
-    res.status(500).json({ message: "Server Error", error });
-  }
+        await course.save();
+
+        await Instructor.findByIdAndUpdate(instructorId, { $push: { courses: course._id } });
+
+        res.status(201).json(course);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };
 
-// Get courses for logged-in instructor
-exports.getInstructorCourses = async (req, res) => {
-  try {
-    const courses = await Course.find({ instructor: req.user.id });
-    res.status(200).json(courses);
-  } catch (error) {
-    res.status(500).json({ message: "Server Error", error });
-  }
+exports.getCourses = async (req, res) => {
+    try {
+        const courses = await Course.find().populate("instructor");
+        res.json(courses);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };

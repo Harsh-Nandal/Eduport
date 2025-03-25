@@ -103,7 +103,6 @@ export default defineComponent({
         if (res.ok) {
           userData.value = data
           name.value = data.name
-          console.log('✅ Retrieved User:', data)
         } else {
           console.error('❌ Error fetching user:', data.message)
           errorMessage.value = data.message
@@ -127,7 +126,6 @@ export default defineComponent({
       }
 
       try {
-        console.log('🚀 Saving Name:', name.value)
 
         const response = await fetch(`http://localhost:8080/api/users/${userId.value}`, {
           method: 'PUT',
@@ -138,7 +136,6 @@ export default defineComponent({
         const result = await response.json()
 
         if (response.ok) {
-          console.log('✅ Name Saved:', result)
           router.push('/')
         } else {
           console.error('❌ Error saving name:', result.message)

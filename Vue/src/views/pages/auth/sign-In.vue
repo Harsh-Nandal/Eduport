@@ -187,7 +187,6 @@ const fetchProfile = async () => {
   }
 
   try {
-    console.log("🔑 Using Token:", token);
 
     const response = await fetch("http://localhost:8080/api/user/profile", {
       method: "GET",
@@ -202,7 +201,6 @@ const fetchProfile = async () => {
     }
 
     const data = await response.json();
-    console.log("✅ Profile Data:", data);
   } catch (error) {
     console.error("❌ Error fetching profile:", error);
   }
@@ -220,7 +218,6 @@ const handleSignIn = async () => {
       return;
     }
 
-    console.log("📡 Sending login request:", credentials.value);
 
     const response = await fetch("http://localhost:8080/api/login", {
       method: "POST",
@@ -231,7 +228,6 @@ const handleSignIn = async () => {
     });
 
     const data = await response.json();
-    console.log("🔹 Received Response:", data);
 
     // ✅ Ensure response contains a token
     if (!response.ok || !data.token) {
@@ -240,7 +236,6 @@ const handleSignIn = async () => {
       return;
     }
 
-    console.log("✅ Login successful, storing token:", data.token);
 
     // ✅ Store token properly in localStorage
     localStorage.setItem("authToken", data.token);
@@ -267,14 +262,12 @@ const handleSignIn = async () => {
 // ✅ Check for stored token when component mounts
 onMounted(() => {
   const storedToken = localStorage.getItem("authToken");
-  console.log("🔑 Stored Token:", storedToken ? storedToken : "No token found");
 
   // ✅ Handle OAuth token from URL
   const urlParams = new URLSearchParams(window.location.search);
   const urlToken = urlParams.get("token");
 
   if (urlToken) {
-    console.log("✅ OAuth Token found in URL:", urlToken);
     localStorage.setItem("authToken", urlToken);
   }
 

@@ -9,7 +9,7 @@ const User = require("./models/user.js");
 const authMiddleware = require("./middleware/authMiddleware.js");
 const instructorRoutes = require("./routes/instructorRoutes");
 const bodyParser = require("body-parser");
-const courseRoutes = require("./routes/courses");
+const courseRoutes = require("./routes/courseRoutes.js");
 const session = require("express-session");
 const userRoutes = require("./routes/users");
 

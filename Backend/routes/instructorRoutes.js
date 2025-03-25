@@ -4,7 +4,7 @@ const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const multer = require("multer");
 const dotenv = require("dotenv");
 const User = require("../models/user");
-const Instructor = require("../models/Instructor");
+const Instructor = require("../models/instructor");
 const authMiddleware = require("../middleware/authMiddleware");
 
 dotenv.config();

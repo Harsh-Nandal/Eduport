@@ -191,7 +191,6 @@ export default {
       const storedToken = localStorage.getItem("authToken");
       if (storedToken) {
         this.token = storedToken;
-        console.log("✅ Loaded Token:", this.token);
       } else {
         console.warn("⚠️ No token found in localStorage.");
         this.token = "";
@@ -205,7 +204,6 @@ export default {
       }
 
       try {
-        console.log("📡 Sending Request with Token:", this.token);
         const formData = new FormData();
         formData.append("fullName", this.form.fullName);
         formData.append("email", this.form.email);
@@ -245,7 +243,6 @@ const data = await response.json();
         }
 
         alert("✅ Profile created successfully!");
-        console.log("✅ Profile Data:", data);
 
         // ✅ Redirect user to home page
         this.router.push("/");
