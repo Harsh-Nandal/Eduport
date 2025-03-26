@@ -1,89 +1,81 @@
-// server.js
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const authRoutes = require('./routes/authRoutes');
-require('dotenv').config();
-const jwt = require("jsonwebtoken")
-const User = require("./models/user.js");
-const authMiddleware = require("./middleware/authMiddleware.js");
-const instructorRoutes = require("./routes/instructorRoutes");
-const bodyParser = require("body-parser");
-const courseRoutes = require("./routes/courseRoutes.js");
 const session = require("express-session");
+const dotenv = require("dotenv");
+const jwt = require("jsonwebtoken");
+
+const authRoutes = require('./routes/authRoutes');
+const instructorRoutes = require("./routes/instructorRoutes");
+const courseRoutes = require("./routes/courseRoutes");
 const userRoutes = require("./routes/users");
+const mediaRoutes = require('./routes/mediaRoutes');
+const lectureRoutes = require('./routes/lectureRoutes');
+const faqRoutes = require('./routes/faqRoutes');
+const tagRoutes = require('./routes/tagRoutes');
+const reviewerMessageRoutes = require('./routes/reviewerMessageRoutes');
 
+const authMiddleware = require("./middleware/authMiddleware");
+const User = require("./models/user");
 
-
-
+// Load environment variables
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 
 // Middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: "http://localhost:5173", // ✅ Frontend URL
-    credentials: true, // ✅ Allow cookies, authentication headers
-    methods: "GET,POST,PUT,DELETE,OPTIONS", // ✅ Explicitly allow these methods
-    allowedHeaders: "Content-Type,Authorization", // ✅ Explicitly allow headers
+    origin: "http://localhost:5173",
+    credentials: true,
+    methods: "GET,POST,PUT,DELETE,OPTIONS",
+    allowedHeaders: "Content-Type,Authorization",
   })
 );
 app.use(
   session({
-    secret: "your_secret_key",
+    secret: process.env.SESSION_SECRET || "your_secret_key",
     resave: false,
     saveUninitialized: false,
     cookie: { 
-      secure: false, // Set true if using HTTPS
-      httpOnly: true,
-      sameSite: "lax" // ✅ Important for CORS
+      secure: process.env.NODE_ENV === "production", 
+      httpOnly: true, 
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
     },
   })
 );
-// Required for handling preflight requests
-app.options("*", cors());
-app.use((req, res, next) => {
-  console.log("🔥 Incoming request:", req.method, req.url);
-  console.log("🛠️ Headers:", req.headers);
-  next();
-});
-app.use(bodyParser.json());
-app.use("/uploads", express.static("uploads")); // Serve profile pictures
-app.use(express.urlencoded({ extended: true }));
-
-
+app.use('/uploads', express.static("uploads")); // Serve media files
 
 // Database connection
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-}).then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB connection error:', err));
+}).then(() => console.log('✅ MongoDB connected'))
+  .catch(err => console.error('❌ MongoDB connection error:', err));
 
 // Routes
 app.use('/api', authRoutes);
-
 app.use("/api", instructorRoutes);
-
 app.use("/api/courses", courseRoutes);
 app.use("/api/users", userRoutes);
+app.use('/api/media', mediaRoutes);
+app.use('/api/lectures', lectureRoutes);
+app.use('/api/faqs', faqRoutes);
+app.use('/api/tags', tagRoutes);
+app.use('/api/reviewer-messages', reviewerMessageRoutes);
 
-
-
-// 🟢 **API: Make User an Instructor**
+// API: Make User an Instructor
 app.post("/api/make-instructor", authMiddleware, async (req, res) => {
   try {
     const { email, phoneNo } = req.body;
-
-    // Find the user by email
     let user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Update user role
     user.role = "instructor";
-    user.phoneNo = phoneNo; // Update only phoneNo
+    user.phoneNo = phoneNo;
     await user.save();
 
     res.json({ message: "User is now an instructor!" });
@@ -93,10 +85,4 @@ app.post("/api/make-instructor", authMiddleware, async (req, res) => {
   }
 });
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-
-
-
-
-
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

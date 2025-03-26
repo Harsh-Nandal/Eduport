@@ -10,6 +10,10 @@ const courseSchema = new mongoose.Schema({
     discount: { type: Number, default: 0 },
     totalLectures: { type: Number, required: true },
     courseTime: { type: String, required: true },
+    image: String, // Store image URL
+    videoUrl: String, // URL if provided
+    videoFile: String, // Uploaded video file path
+    curriculum: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Curriculum' }],
     instructor: { type: mongoose.Schema.Types.ObjectId, ref: "Instructor" }
 });
 
