@@ -72,7 +72,6 @@ const fetchUserProfile = async () => {
 
     const data = await response.json();
     
-    console.log("✅ API Response:", data);
 
     let profilePic = data.profilePicture;
 
