@@ -9,11 +9,6 @@ const authRoutes = require('./routes/authRoutes');
 const instructorRoutes = require("./routes/instructorRoutes");
 const courseRoutes = require("./routes/courseRoutes");
 const userRoutes = require("./routes/users");
-const mediaRoutes = require('./routes/mediaRoutes');
-const lectureRoutes = require('./routes/lectureRoutes');
-const faqRoutes = require('./routes/faqRoutes');
-const tagRoutes = require('./routes/tagRoutes');
-const reviewerMessageRoutes = require('./routes/reviewerMessageRoutes');
 
 const authMiddleware = require("./middleware/authMiddleware");
 const User = require("./models/user");
@@ -61,11 +56,7 @@ app.use('/api', authRoutes);
 app.use("/api", instructorRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/users", userRoutes);
-app.use('/api/media', mediaRoutes);
-app.use('/api/lectures', lectureRoutes);
-app.use('/api/faqs', faqRoutes);
-app.use('/api/tags', tagRoutes);
-app.use('/api/reviewer-messages', reviewerMessageRoutes);
+
 
 // API: Make User an Instructor
 app.post("/api/make-instructor", authMiddleware, async (req, res) => {

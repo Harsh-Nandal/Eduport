@@ -1,10 +1,11 @@
 const Course = require("../models/course");
 const Instructor = require("../models/instructor");
-const Curriculum = require('../models/curriculum');
+
 
 const createCourse = async (req, res) => {
     try {
-        const { title, description, category, level, language, price, discount, totalLectures, courseTime, instructorId } = req.body;
+        const { title, description, category, level, language, price, discount, totalLectures, courseTime, image,
+            videoUrl, videoFile, instructorId, faqs, tags, lectures, reviewMessages } = req.body;
 
         const course = new Course({
             title,
@@ -16,7 +17,14 @@ const createCourse = async (req, res) => {
             discount,
             totalLectures,
             courseTime,
-            instructor: instructorId
+            image,
+            videoUrl,
+            videoFile,
+            instructor: instructorId,
+            faqs,
+            tags,
+            lectures,
+            reviewMessages
         });
 
         await course.save();
@@ -55,5 +63,36 @@ const addSection = async (req, res) => {
     }
 };
 
-// ✅ Properly export all functions
-module.exports = { createCourse, getCourses, addSection };
+const addLecture = async (req, res) => {
+    try {
+        const { courseId, title, videoUrl, videoFile, topics } = req.body;
+        const course = await Course.findById(courseId);
+        if (!course) return res.status(404).json({ message: 'Course not found' });
+
+        const newLecture = { title, videoUrl, videoFile, topics };
+        course.lectures.push(newLecture);
+        await course.save();
+
+        res.status(200).json({ message: 'Lecture added successfully', newLecture });
+    } catch (error) {
+        res.status(500).json({ message: 'Error adding lecture', error });
+    }
+};
+
+const addReview = async (req, res) => {
+    try {
+        const { courseId, user, message, rating } = req.body;
+        const course = await Course.findById(courseId);
+        if (!course) return res.status(404).json({ message: 'Course not found' });
+
+        const newReview = { user, message, rating };
+        course.reviewMessages.push(newReview);
+        await course.save();
+
+        res.status(200).json({ message: 'Review added successfully', newReview });
+    } catch (error) {
+        res.status(500).json({ message: 'Error adding review', error });
+    }
+};
+
+module.exports = { createCourse, getCourses, addSection, addLecture, addReview };
